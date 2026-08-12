@@ -90,8 +90,10 @@ authentication. Select the endpoint with `--minimax-region`:
 | `cn` | `https://api.minimaxi.com/v1/image_generation` |
 
 Supported models are `image-01` (default) and `image-01-live`. The request
-requires `model` and `prompt`; optional controls include `aspect_ratio`,
-`width`, `height`, `response_format`, `seed`, `n`, and `prompt_optimizer`.
+requires `model` and `prompt`; optional controls include `subject_reference`,
+`aspect_ratio`, `width`, `height`, `response_format`, `seed`, `n`, and
+`prompt_optimizer`. Add one or more HTTPS subject images with repeatable
+`--subject-reference` arguments.
 Choose `url` or `base64` with `--response-format`. URL results expire after
 24 hours, so the script downloads the first result before returning.
 

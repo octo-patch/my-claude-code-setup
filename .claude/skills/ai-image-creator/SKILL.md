@@ -176,6 +176,7 @@ If the user needs resizing, format conversion, or other manipulation, first dete
 | `--provider` | -- | No | `openrouter` | `openrouter`, `google`, or `minimax` |
 | `--minimax-region` | -- | No | `global` | MiniMax endpoint region: `global` or `cn` |
 | `--response-format` | -- | No | `url` | MiniMax output format: `url` or `base64` |
+| `--subject-reference` | -- | No | -- | MiniMax subject reference image URL (repeatable) |
 | `--width` / `--height` | -- | No | -- | MiniMax image dimensions; provide both together |
 | `--seed` | -- | No | -- | MiniMax generation seed |
 | `--num-images` | -- | No | -- | MiniMax image count (`n`) |

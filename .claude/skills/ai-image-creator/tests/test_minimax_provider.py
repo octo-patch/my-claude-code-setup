@@ -55,6 +55,7 @@ class MiniMaxProviderTests(unittest.TestCase):
             seed=42,
             num_images=2,
             prompt_optimizer=False,
+            subject_references=["https://example.invalid/subject.png"],
         )
         self.assertEqual(
             body,
@@ -68,6 +69,12 @@ class MiniMaxProviderTests(unittest.TestCase):
                 "seed": 42,
                 "n": 2,
                 "prompt_optimizer": False,
+                "subject_reference": [
+                    {
+                        "type": "character",
+                        "image_file": "https://example.invalid/subject.png",
+                    }
+                ],
             },
         )
 

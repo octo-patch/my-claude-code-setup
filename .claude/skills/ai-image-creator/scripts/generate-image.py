@@ -595,6 +595,13 @@ def parse_args() -> argparse.Namespace:
         default="url",
         help="MiniMax response format (default: url)",
     )
+    parser.add_argument(
+        "--subject-reference",
+        action="append",
+        default=None,
+        metavar="URL",
+        help="MiniMax subject reference image URL (repeatable)",
+    )
     parser.add_argument("--width", type=int, default=None, help="MiniMax image width")
     parser.add_argument("--height", type=int, default=None, help="MiniMax image height")
     parser.add_argument("--seed", type=int, default=None, help="MiniMax generation seed")
@@ -936,6 +943,7 @@ def build_request_body(
     seed: int | None = None,
     num_images: int | None = None,
     prompt_optimizer: bool | None = None,
+    subject_references: list[str] | None = None,
 ) -> dict[str, Any]:
     """Build JSON request body for the given provider.
 
@@ -966,6 +974,7 @@ def build_request_body(
         seed: Optional MiniMax generation seed.
         num_images: Optional MiniMax image count.
         prompt_optimizer: Optional MiniMax prompt optimizer toggle.
+        subject_references: Optional MiniMax subject reference image URLs.
 
     Returns:
         Dict suitable for JSON serialization as request body.
@@ -989,6 +998,11 @@ def build_request_body(
             "prompt_optimizer": prompt_optimizer,
         }
         body.update({key: value for key, value in optional_fields.items() if value is not None})
+        if subject_references:
+            body["subject_reference"] = [
+                {"type": "character", "image_file": image_url}
+                for image_url in subject_references
+            ]
         return body
 
     if provider == "openrouter" and video_source:
@@ -1874,11 +1888,12 @@ def main() -> None:
         args.seed,
         args.num_images,
         args.prompt_optimizer,
+        args.subject_reference,
     )
     if args.provider != "minimax" and any(value is not None for value in minimax_only_args):
         print(
             "ERROR: --width, --height, --seed, --num-images, and "
-            "--prompt-optimizer require --provider minimax",
+            "--prompt-optimizer/--subject-reference require --provider minimax",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -1894,6 +1909,11 @@ def main() -> None:
             sys.exit(1)
         if (args.width is None) != (args.height is None):
             print("ERROR: --width and --height must be provided together", file=sys.stderr)
+            sys.exit(1)
+        if args.subject_reference and any(
+            not image_url.startswith("https://") for image_url in args.subject_reference
+        ):
+            print("ERROR: --subject-reference must be an HTTPS image URL", file=sys.stderr)
             sys.exit(1)
 
     # Validate --analyze mode
@@ -2162,6 +2182,7 @@ def main() -> None:
         seed=args.seed,
         num_images=args.num_images,
         prompt_optimizer=args.prompt_optimizer,
+        subject_references=args.subject_reference,
     )
 
     print(f"URL: {url}", file=sys.stderr)
